@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:ajudae/constants/colors.dart';
 import 'package:ajudae/constants/texts.dart';
 import 'package:ajudae/constants/widgets.dart';
@@ -64,9 +62,9 @@ class _HomeViewState extends State<HomeView> {
                     backgroundColor: AppColors.mainColor,
                     child: CircleAvatar(
                       radius: 18.5,
-                      foregroundImage: Image.memory(base64Decode(
-                              controller.user.value.profilePicture))
-                          .image,
+                      foregroundImage:
+                          Widgets.getImage(controller.user.value.profilePicture)
+                              .image,
                     ),
                   )
                 ],

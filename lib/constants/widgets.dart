@@ -1,11 +1,10 @@
-import 'dart:convert';
-
 import 'package:ajudae/constants/colors.dart';
 import 'package:ajudae/constants/icons.dart';
 import 'package:ajudae/constants/texts.dart';
 import 'package:ajudae/models/claim.dart';
 import 'package:ajudae/models/claim_type.dart';
 import 'package:ajudae/models/news.dart';
+import 'package:ajudae/views/home/location_view.dart';
 import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
@@ -30,9 +29,7 @@ class Widgets {
                   decoration: BoxDecoration(
                       image: DecorationImage(
                           fit: BoxFit.fitWidth,
-                          image: Image.memory(
-                            base64Decode(news[index].image),
-                          ).image),
+                          image: getImage(news[index].image).image),
                       borderRadius: BorderRadius.circular(8)),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -69,6 +66,27 @@ class Widgets {
           );
         })
       ],
+    );
+  }
+
+  static Image getImage(String url) {
+    return Image.network(
+      url,
+      fit: BoxFit.contain,
+      loadingBuilder: (context, child, loadingProgress) {
+        debugPrint("Carregando imagem...");
+        return loadingProgress == null
+            ? child
+            : Center(
+                child: CircularProgressIndicator(
+                  color: Colors.red,
+                  value: loadingProgress.expectedTotalBytes != null
+                      ? loadingProgress.cumulativeBytesLoaded /
+                          loadingProgress.expectedTotalBytes!
+                      : null,
+                ),
+              );
+      },
     );
   }
 
@@ -158,9 +176,9 @@ class Widgets {
                           children: [
                             CircleAvatar(
                               radius: 13,
-                              foregroundImage: Image.memory(base64Decode(
-                                      claimList[index].user.profilePicture))
-                                  .image,
+                              foregroundImage:
+                                  getImage(claimList[index].user.profilePicture)
+                                      .image,
                             ),
                             const Gap(8),
                             Text(
@@ -225,26 +243,39 @@ class Widgets {
   static Widget bottomNavigationBar(int position) {
     return Container(
       decoration: BoxDecoration(boxShadow: [
-        BoxShadow(
-          color: Colors.grey.withOpacity(0.5),
-          blurRadius: 8,
-        ),
+        BoxShadow(color: Colors.grey.withOpacity(0.25), blurRadius: 8),
       ]),
-      child: BottomNavigationBar(
-        items: const [
-          BottomNavigationBarItem(
-              label: "",
-              icon: Icon(
+      child: DefaultTabController(
+        length: 2,
+        initialIndex: position,
+        child: TabBar(
+          labelColor: AppColors.mainColor,
+          indicatorColor: AppColors.mainColor,
+          indicatorPadding: const EdgeInsets.fromLTRB(8.0, 6.0, 8.0, 6.0),
+          indicator: UnderlineTabIndicator(
+              borderSide: BorderSide(width: 4.0, color: AppColors.mainColor),
+              borderRadius: BorderRadius.circular(8)),
+          tabs: [
+            Tab(
+                icon: GestureDetector(
+              onTap: () => Get.until((route) => route.isFirst),
+              child: const Icon(
                 Icons.home_rounded,
-              )),
-          BottomNavigationBarItem(
-              label: "",
-              icon: Icon(
-                Icons.location_pin,
-              ))
-        ],
-        iconSize: 32,
-        selectedIconTheme: IconThemeData(color: AppColors.mainColor),
+                size: 32,
+              ),
+            )),
+            Tab(
+              icon: GestureDetector(
+                onTap: () => Get.to(() => const LocationView(),
+                    transition: Transition.cupertino),
+                child: const Icon(
+                  Icons.location_pin,
+                  size: 32,
+                ),
+              ),
+            )
+          ],
+        ),
       ),
     );
   }

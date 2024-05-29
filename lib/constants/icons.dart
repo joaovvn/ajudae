@@ -1,4 +1,5 @@
 class AppIcons {
+  static String home = "assets/icons/home.png";
   static String thrashCollection = "assets/icons/trash_collection.png";
   static String pothole = "assets/icons/pothole.png";
   static String streetLight = "assets/icons/street_light.png";
