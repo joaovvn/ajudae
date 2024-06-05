@@ -4,6 +4,7 @@ import 'package:ajudae/constants/texts.dart';
 import 'package:ajudae/models/claim.dart';
 import 'package:ajudae/models/claim_type.dart';
 import 'package:ajudae/models/news.dart';
+import 'package:ajudae/views/home/home_view.dart';
 import 'package:ajudae/views/home/location_view.dart';
 import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/material.dart';
@@ -240,6 +241,122 @@ class Widgets {
     );
   }
 
+  static Widget locationClaims(List<Claim> claimList) {
+    return Obx(() {
+      return Expanded(
+        child: ListView.builder(
+            shrinkWrap: true,
+            itemCount: claimList.length,
+            itemBuilder: (context, index) {
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 24.0),
+                child: Container(
+                  height: 235,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8),
+                    color: Colors.white,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.5),
+                        blurRadius: 8,
+                      ),
+                    ],
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(18.0, 13.0, 13.0, 17.0),
+                    child: Column(
+                      children: [
+                        Row(
+                          children: [
+                            CircleAvatar(
+                              radius: 13,
+                              foregroundImage:
+                                  getImage(claimList[index].user.profilePicture)
+                                      .image,
+                            ),
+                            const Gap(8),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  textAlign: TextAlign.center,
+                                  claimList[index].user.userName,
+                                  style: const TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                Row(
+                                  children: [
+                                    Icon(
+                                      Icons.location_pin,
+                                      size: 16,
+                                      color: AppColors.mainColor,
+                                    ),
+                                    const Gap(4),
+                                    Text(
+                                      textAlign: TextAlign.center,
+                                      claimList[index].address,
+                                      style: const TextStyle(fontSize: 9),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                        const Gap(16),
+                        Row(
+                          children: [
+                            Container(
+                              height: 127,
+                              width: 170,
+                              decoration: BoxDecoration(
+                                  image: DecorationImage(
+                                      fit: BoxFit.fill,
+                                      image: getImage(claimList[index].imageUrl)
+                                          .image),
+                                  borderRadius: BorderRadius.circular(4)),
+                            ),
+                            const Gap(8),
+                            SizedBox(
+                              width: 133,
+                              height: 127,
+                              child: Text(
+                                textAlign: TextAlign.start,
+                                claimList[index].description,
+                                style: const TextStyle(
+                                    fontSize: 10, overflow: TextOverflow.clip),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const Gap(11),
+                        Row(
+                          children: [
+                            Image.asset(
+                              height: 16,
+                              AppIcons.getClaimIcon(
+                                  claimList[index].claimTypeId),
+                              fit: BoxFit.fitHeight,
+                            ),
+                            const Gap(4),
+                            Text(
+                              textAlign: TextAlign.center,
+                              Texts.getClaimName(claimList[index].claimTypeId),
+                              style: const TextStyle(fontSize: 9),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            }),
+      );
+    });
+  }
+
   static Widget bottomNavigationBar(int position) {
     return Container(
       decoration: BoxDecoration(boxShadow: [
@@ -255,23 +372,26 @@ class Widgets {
           indicator: UnderlineTabIndicator(
               borderSide: BorderSide(width: 4.0, color: AppColors.mainColor),
               borderRadius: BorderRadius.circular(8)),
-          tabs: [
+          onTap: (position) {
+            switch (position) {
+              case 0:
+                Get.offAll(() => const HomeView(),
+                    transition: Transition.noTransition);
+              case 1:
+                Get.offAll(() => const LocationView(),
+                    transition: Transition.noTransition);
+            }
+          },
+          tabs: const [
             Tab(
-                icon: GestureDetector(
-              onTap: () => Get.until((route) => route.isFirst),
-              child: const Icon(
-                Icons.home_rounded,
-                size: 32,
-              ),
+                icon: Icon(
+              Icons.home_rounded,
+              size: 32,
             )),
             Tab(
-              icon: GestureDetector(
-                onTap: () => Get.to(() => const LocationView(),
-                    transition: Transition.noTransition),
-                child: const Icon(
-                  Icons.location_pin,
-                  size: 32,
-                ),
+              icon: Icon(
+                Icons.location_pin,
+                size: 32,
               ),
             )
           ],
