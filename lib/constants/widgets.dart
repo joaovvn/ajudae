@@ -267,7 +267,7 @@ class Widgets {
             Tab(
               icon: GestureDetector(
                 onTap: () => Get.to(() => const LocationView(),
-                    transition: Transition.cupertino),
+                    transition: Transition.noTransition),
                 child: const Icon(
                   Icons.location_pin,
                   size: 32,
